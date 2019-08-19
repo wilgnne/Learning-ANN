@@ -46,7 +46,7 @@ def main ():
             bolY = 0
         screen.fill(black)
 
-        pygame.draw.circle(screen, blue, (bolX, int(bolY)), 10)
+        pygame.draw.circle(screen, blue, (bolX, int(bolY)), bolR)
         pygame.draw.line(screen, red, (playerX - playerW / 2, 200), (playerX + playerW / 2, 200), playerH)
 
         pygame.display.flip()
