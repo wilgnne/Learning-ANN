@@ -25,11 +25,6 @@ class Brain (object):
         return 1 / (1 + np.exp(-x))
 
 
-class a:
-    @staticmethod
-    def ola ():
-        return "a"
-
 
 if __name__ == "__main__":
     a = Brain(2, [20], 1, ones=False)
