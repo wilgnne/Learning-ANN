@@ -43,11 +43,12 @@ class Avaliation:
         contBols = self.lenTest
 
         deltatime = 1/60
-
-        while contBols != 0:
+        close = False
+        while contBols != 0 and not close:
             init = time.time()
             for event in pygame.event.get():
-                if event.type == pygame.QUIT: sys.exit()
+                if event.type == pygame.QUIT:
+                    close = True
 
             [player.think(bolX, deltatime) for player in self.players]
 
@@ -74,6 +75,7 @@ class Avaliation:
             deltatime = time.time() - init
         
         points = [player.points for player in self.players]
+        pygame.quit()
         return points
 
 
