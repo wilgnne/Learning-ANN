@@ -78,5 +78,5 @@ class Avaliation:
         pygame.quit()
         return points
 
-
-print(Avaliation([Brain(2, [20], 1, False) for i in range(5)], 10).start())
+if __name__ == "__main__":
+    print(Avaliation([Brain(2, [20], 1, False) for i in range(5)], 10).start())
