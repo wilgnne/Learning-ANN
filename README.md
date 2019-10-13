@@ -7,4 +7,4 @@ Learning about artificial neural networks
 - NumPy
 
 Run sh script to install
-> sh -c "$(wget https://raw.github.com/Wilgnne/Learning-ANN/install.sh -O -)"
+> sh -c "$(wget https://raw.githubusercontent.com/Wilgnne/Learning-ANN/master/install.sh -O -)"
