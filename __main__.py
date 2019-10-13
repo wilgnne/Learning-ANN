@@ -1,12 +1,14 @@
 import numpy as np
 
-#Brain Class: Representação da Rede Neural
 class Brain (object):
+    '''Brain Class: Representação da Rede Neural
 
-    #Construtor: Recebe o tanhando da entrada, uma lista contendo os tamanhos da camada interna,
-    #            o tamanho da saida, e se a rede sera inicializada com pesos 'uns' ou randomicos
+    Construtor: Recebe o tanhando da entrada, 
+    uma lista contendo os tamanhos da camada interna, 
+    o tamanho da saida, 
+    e se a rede sera inicializada com pesos 'uns' ou randomicos'''
+
     def __init__ (self, inputs:int, hidden:list, output:int, ones=True):
-
         #Define uma lista contendo a arquitetura (tamanho de suas camadas) da rede neural
         self.architecture = [inputs] + hidden + [output]
 
@@ -19,8 +21,8 @@ class Brain (object):
             weight = funcGenereate((self.architecture[i],  self.architecture[i + 1]))
             self.pesos.append( 2 * weight - 1)
 
-    #Pensar: Recebe o array de entrada e retorna a saida correspondente
     def think (self, inputs: np.array):
+        '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
         sinapses = inputs
         for hidden in self.pesos:
@@ -29,9 +31,9 @@ class Brain (object):
         
         return sinapses
 
-    #Função Sigmoidal de ativação dos neuronios
     @staticmethod
     def sigmoid (x):
+        '''Função Sigmoidal de ativação dos neuronios'''
         return 1 / (1 + np.exp(-x))
 
 if __name__ == "__main__":
