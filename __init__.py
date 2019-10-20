@@ -4,8 +4,9 @@ try:
     print("GPU")
     GPU = True
 except:
-    import numpy as np
     print("CPU")
+    
+import numpy as np
 import matplotlib.pyplot as plt
 import time, pickle
 
