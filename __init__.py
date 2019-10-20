@@ -1,7 +1,8 @@
+GPU = False
 try:
-    import cupy as np
-    np.array([0])
+    import cupy as cp
     print("GPU")
+    GPU = True
 except:
     import numpy as np
     print("CPU")
@@ -22,7 +23,8 @@ class Brain (object):
 
         #Expresao lambida que seleciona o método a ser usado para gerar os pesos
         funcGenereate = (lambda x: np.ones(x)) if ones else (lambda x: np.random.random(x))
-
+        if GPU:
+            funcGenereate = (lambda x: cp.ones(x)) if ones else (lambda x: cp.random.random(x))
 
         #Matriz de pesos da rede
         self.pesos = []
@@ -34,6 +36,9 @@ class Brain (object):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
         sinapses = inputs
+        if GPU:
+            sinapses = cp.asarray(sinapses)
+        
         for hidden in self.pesos:
             weights = np.dot( hidden, sinapses)
             sinapses = Brain.sigmoid(weights)
