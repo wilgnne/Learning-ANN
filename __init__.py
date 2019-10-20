@@ -6,7 +6,7 @@ except:
     import numpy as np
     print("CPU")
 import matplotlib.pyplot as plt
-import time
+import time, pickle
 
 class Brain (object):
     '''Brain Class: Representação da Rede Neural
@@ -39,14 +39,29 @@ class Brain (object):
             sinapses = Brain.sigmoid(weights)
         
         return sinapses
+    
+    def serialize(self, path, name):
+        try:
+            os.mkdir(f'{path}/{name}')
+        except:
+            pass
+        binary_file = open(f'{path}/{name}.bin',mode='wb')
+        pickle.dump(self, binary_file)
+        binary_file.close()
+    
+    @staticmethod
+    def deserialize (path):
+        binary_file = open(path,mode='rb')
+        return pickle.load(binary_file)
 
     @staticmethod
     def sigmoid (x):
         '''Função Sigmoidal de ativação dos neuronios'''
         return 1 / (1 + np.exp(-x))
 
-from mpl_toolkits.mplot3d import axes3d
+
 if __name__ == "__main__":
+    from mpl_toolkits.mplot3d import axes3d
     a = Brain(2, [100]*10, 1, ones=False)
 
     # Grab some test data.
