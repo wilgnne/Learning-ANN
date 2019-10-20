@@ -1,11 +1,12 @@
 GPU = False
 try:
     import cupy as cp
+    cp.array([0])
     print("GPU")
     GPU = True
 except:
     print("CPU")
-    
+
 import numpy as np
 import matplotlib.pyplot as plt
 import time, pickle
