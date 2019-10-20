@@ -32,7 +32,7 @@ class Brain (object):
             weight = funcGenereate((self.architecture[i + 1], self.architecture[i]))
             self.pesos.append( 2 * weight - 1)
 
-    def think (self, inputs: np.array):
+    def think (self, inputs):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
         sinapses = inputs
