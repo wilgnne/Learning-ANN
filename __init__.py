@@ -8,7 +8,6 @@ except:
     print("CPU")
 
 import numpy as np
-import matplotlib.pyplot as plt
 import time, pickle
 
 class Brain (object):
@@ -69,6 +68,7 @@ class Brain (object):
 
 if __name__ == "__main__":
     from mpl_toolkits.mplot3d import axes3d
+    import matplotlib.pyplot as plt
     a = Brain(2, [100]*10, 1, ones=False)
 
     # Grab some test data.
