@@ -30,18 +30,20 @@ class Brain (object):
         #Matriz de pesos da rede
         self.pesos = []
         for i in range(len(self.architecture)-1):
-            weight = funcGenereate((self.architecture[i + 1], self.architecture[i]))
-            self.pesos.append( 2 * weight - 1)
+            weight = funcGenereate((self.architecture[i], self.architecture[i + 1]))
+            self.pesos.append( 10 * weight - 5)
 
     def think (self, inputs):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
         sinapses = inputs
+        xp = np
         if GPU:
             sinapses = cp.asarray(sinapses)
+            xp = cp
         
         for hidden in self.pesos:
-            weights = np.dot( hidden, sinapses)
+            weights =  xp.dot(sinapses, hidden)
             sinapses = Brain.sigmoid(weights)
         
         return sinapses
@@ -69,36 +71,29 @@ class Brain (object):
 if __name__ == "__main__":
     from mpl_toolkits.mplot3d import axes3d
     import matplotlib.pyplot as plt
-    a = Brain(2, [100]*10, 1, ones=False)
+    while True:
+        a = Brain(2, [20, 30, 15, 5], 1, ones=False)
+        print(len(a.pesos))
+        full = 0
+        z = []
+        resolution = 512
+        for i in range(resolution):
+            for j in range(resolution):
+                ia = 200 * (i / resolution) - 100
+                ja = 200 * (j / resolution) - 100
+                entry = np.array([ja, ia])
+                out = a.think(entry)
+                z.append(float(out))
+                print("{:.2f}".format(100*full /(resolution*resolution)))
+                full += 1
 
-    # Grab some test data.
-    X, Y, Z = axes3d.get_test_data(0.05)
-    full = 0
-    z = []
-    for i in range(120):
-        for j in range(120):
-            t = time.time()
-            entry = np.array([X[i][j], Y[i][j]]).T
-            out = a.think(entry)
-            z.append(float(out))
-            full += time.time() - t
-    
-    print("{:.10f}".format(full/(120*120)))
+        Z = np.array(z)
+        Z.shape = (resolution, resolution)
 
-    
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection='3d')
-
-    Z = np.array(z)
-    Z.shape = (120, 120)
-
-    try:
-        Z = np.asnumpy(Z)
-    except:
-        pass
-
-
-    # Plot a basic wireframe.
-    ax.plot_surface(X, Y, Z, cmap='viridis')
-
-    plt.show()
+        try:
+            Z = np.asnumpy(Z)
+        except:
+            pass
+        
+        plt.imshow(Z, cmap="gray")
+        plt.show()
