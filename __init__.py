@@ -8,7 +8,7 @@ except:
     print("CPU")
 
 import numpy as np
-import time, pickle
+import time, pickle, random
 
 class Brain (object):
     '''Brain Class: Representação da Rede Neural
@@ -18,7 +18,7 @@ class Brain (object):
     o tamanho da saida, 
     e se a rede sera inicializada com pesos 'uns' ou randomicos'''
 
-    def __init__ (self, inputs:int, hidden:list, output:int, ones=True):
+    def __init__ (self, inputs:int, hidden:list, output:int, ones=False):
         #Define uma lista contendo a arquitetura (tamanho de suas camadas) da rede neural
         self.architecture = [inputs] + hidden + [output]
 
@@ -29,9 +29,11 @@ class Brain (object):
 
         #Matriz de pesos da rede
         self.pesos = []
+        u = -5
+        v = 5
         for i in range(len(self.architecture)-1):
             weight = funcGenereate((self.architecture[i], self.architecture[i + 1]))
-            self.pesos.append( 10 * weight - 5)
+            self.pesos.append( (v - u) * weight + u)
 
     def think (self, inputs):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
@@ -42,15 +44,15 @@ class Brain (object):
             sinapses = cp.asarray(sinapses)
             xp = cp
         
-        for hidden in self.pesos:
-            weights =  xp.dot(sinapses, hidden)
+        for i in range(len(self.pesos)):
+            weights =  xp.dot(sinapses, self.pesos[i])
             sinapses = Brain.sigmoid(weights)
         
         return sinapses
     
     def serialize(self, path, name):
         try:
-            os.mkdir(f'{path}/{name}')
+            os.mkdir(f'{path}')
         except:
             pass
         binary_file = open(f'{path}/{name}.bin',mode='wb')
@@ -65,35 +67,85 @@ class Brain (object):
     @staticmethod
     def sigmoid (x):
         '''Função Sigmoidal de ativação dos neuronios'''
-        return 1 / (1 + np.exp(-x))
+        xp = np
+        if GPU:
+            xp = cp
+        return 1 / (1 + xp.exp(-x))
 
 
 if __name__ == "__main__":
     from mpl_toolkits.mplot3d import axes3d
     import matplotlib.pyplot as plt
     while True:
-        a = Brain(2, [20, 30, 15, 5], 1, ones=False)
+        a = Brain(3, [30, 15], 1)
         print(len(a.pesos))
         full = 0
-        z = []
-        resolution = 512
-        for i in range(resolution):
-            for j in range(resolution):
-                ia = 200 * (i / resolution) - 100
-                ja = 200 * (j / resolution) - 100
-                entry = np.array([ja, ia])
-                out = a.think(entry)
-                z.append(float(out))
-                print("{:.2f}".format(100*full /(resolution*resolution)))
-                full += 1
+        xy = []
+        xz = []
+        yz = []
+        resolution = 64
+        u = 0
+        v = 1
+        for i in range(1, resolution+1):
+            for j in range(1, resolution+1):
+                for k in range(1, resolution + 1):
+                    ia = (v - u) * (i / resolution) + u
+                    ja = (v - u) * (j / resolution) + u
+                    ka = (v - u) * (k / resolution) + u
+                    entry = np.array([ka, ja, ia])
+                    out = a.think(entry)
+                    if k == 1:
+                        xy.append(float(out))
+                    if i == 1:
+                        xz.append(float(out))
+                    if j == 1:
+                        yz.append(float(out))
+                    
+                    print("{:.2f}".format(100*full /(resolution*resolution*resolution)))
+                    full += 1
 
-        Z = np.array(z)
-        Z.shape = (resolution, resolution)
+        XY = np.array(xy)
+        XY.shape = (resolution, resolution)
+
+        XZ = np.array(xz)
+        XZ.shape = (resolution, resolution)
+
+        YZ = np.array(yz)
+        YZ.shape = (resolution, resolution)
 
         try:
-            Z = np.asnumpy(Z)
+            XY = np.asnumpy(XY)
+            XZ = np.asnumpy(XZ)
+            YZ = np.asnumpy(YZ)
         except:
             pass
         
-        plt.imshow(Z, cmap="gray")
+        XY[0][0] = 0
+        XY[0][1] = 1
+
+        XZ[0][0] = 0
+        XZ[0][1] = 1
+
+        YZ[0][0] = 0
+        YZ[0][1] = 1
+        
+
+        fig, axs = plt.subplots(2, 2)
+        ax = axs[0, 0]
+        pcm = ax.pcolormesh(XY, cmap="viridis")
+        fig.colorbar(pcm, ax=ax)
+
+        ax = axs[1, 0]
+        pcm = ax.pcolormesh(XZ, cmap="viridis")
+        fig.colorbar(pcm, ax=ax)
+
+        ax = axs[1, 1]
+        pcm = ax.pcolormesh(YZ, cmap="viridis")
+        fig.colorbar(pcm, ax=ax)
+
         plt.show()
+
+        save = int(input("Salvar? 1/0: "))
+        if save:
+            a.serialize("..", "brain")
+            break
