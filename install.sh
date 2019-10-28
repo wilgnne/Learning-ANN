@@ -1,5 +1,10 @@
-echo "Install Neural Network - Wilgnne K."
-sudo rm -r /usr/lib/python3.7/NeuralNetwork;
-sudo rm -r /usr/lib/python3.7/site-packages/NeuralNetwork;
+echo "Install dependencies"
+sudo pip3.7 install numpy || sudo pip3 install numpy
 
-sudo git clone https://github.com/Wilgnne/Learning-ANN.git /usr/lib/python3.7/NeuralNetwork
+echo "Install Neural Network - Wilgnne K."
+
+path="$(python3.7 -m site --user-site)"
+
+sudo rm -r $path/NeuralNetwork;
+
+sudo git clone https://github.com/Wilgnne/Learning-ANN.git $path/NeuralNetwork
