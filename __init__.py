@@ -10,6 +10,20 @@ except:
 import numpy as np
 import time, pickle, random
 
+def sigmoid (x):
+    '''Função Sigmoidal de ativação dos neuronios'''
+    xp = np
+    if GPU:
+        xp = cp
+    return 1 / (1 + xp.exp(-x))
+
+def ReLU (x):
+    '''Função Retificadora de ativação dos neuronios'''
+    xp = np
+    if GPU:
+        xp = cp
+    return np.maximum(x, 0)
+
 class Brain (object):
     '''Brain Class: Representação da Rede Neural
 
@@ -29,13 +43,13 @@ class Brain (object):
 
         #Matriz de pesos da rede
         self.pesos = []
-        u = -5
-        v = 5
+        u = -1
+        v = 1
         for i in range(len(self.architecture)-1):
             weight = funcGenereate((self.architecture[i], self.architecture[i + 1]))
             self.pesos.append( (v - u) * weight + u)
 
-    def think (self, inputs):
+    def think (self, inputs, activation=ReLU):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
         sinapses = inputs
@@ -46,7 +60,7 @@ class Brain (object):
         
         for i in range(len(self.pesos)):
             weights =  xp.dot(sinapses, self.pesos[i])
-            sinapses = Brain.sigmoid(weights)
+            sinapses = activation(weights)
         
         return sinapses
     
@@ -63,14 +77,6 @@ class Brain (object):
     def deserialize (path):
         binary_file = open(path,mode='rb')
         return pickle.load(binary_file)
-
-    @staticmethod
-    def sigmoid (x):
-        '''Função Sigmoidal de ativação dos neuronios'''
-        xp = np
-        if GPU:
-            xp = cp
-        return 1 / (1 + xp.exp(-x))
 
 
 if __name__ == "__main__":
