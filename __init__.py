@@ -48,10 +48,12 @@ class Brain (object):
         for i in range(len(self.architecture)-1):
             weight = funcGenereate((self.architecture[i], self.architecture[i + 1]))
             self.pesos.append( (v - u) * weight + u)
+        self.inputs = np.zeros(inputs)
 
     def think (self, inputs, activation=ReLU):
         '''Pensar: Recebe o array de entrada e retorna a saida correspondente'''
         #Propagação das sinapses por dentro da rede neural
+        self.inputs = inputs
         sinapses = inputs
         xp = np
         if GPU:
