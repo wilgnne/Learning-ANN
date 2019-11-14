@@ -5,6 +5,6 @@ echo "Install Neural Network - Wilgnne K."
 
 path="$(python3.7 -m site --user-site)"
 
-rm -r $path/NeuralNetwork;
+sudo rm -r $path/NeuralNetwork;
 
 git clone https://github.com/Wilgnne/Learning-ANN.git $path/NeuralNetwork
